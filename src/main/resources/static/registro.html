@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clínica San Martín - Registro</title>
+    <link rel="stylesheet" href="css/registro.css">
+</head>
+<body>
+<div class="container">
+    <!-- Panel izquierdo -->
+    <div class="left-panel">
+        <div class="logo">
+            <h1>+ CLÍNICA<br><span>San Martín</span></h1>
+            <p>Tu salud, nuestra prioridad</p>
+        </div>
+    </div>
+
+    <!-- Panel derecho -->
+    <div class="right-panel">
+        <div class="form-box">
+            <h2>Crear nuevo usuario</h2>
+            <form action="/usuarios/registrar" method="post">
+                <div class="input-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="apellido">Apellido</label>
+                    <input type="text" id="apellido" name="apellido" placeholder="Ingrese su apellido" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="dni">DNI</label>
+                    <input type="text" id="dni" name="dni" placeholder="Ingrese su DNI" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" id="telefono" name="telefono" placeholder="Ingrese su teléfono">
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" name="email" placeholder="Ingrese su correo" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
+                </div>
+
+                <button type="submit" class="btn">REGISTRARSE</button>
+
+                <p class="register-text">¿Ya tienes una cuenta? <a href="login.html">Inicia sesión</a></p>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

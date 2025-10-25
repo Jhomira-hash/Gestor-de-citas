@@ -1,0 +1,126 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f3fa;
+}
+
+.container {
+    display: flex;
+    width: 900px;
+    height: 520px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* Panel izquierdo */
+.left-panel {
+    flex: 1;
+    background: linear-gradient(135deg, #6b3cd1, #9a74f2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 40px;
+    text-align: center;
+}
+
+.left-panel h1 {
+    font-size: 36px;
+    line-height: 1.2;
+}
+
+.left-panel span {
+    color: #e9dcff;
+}
+
+.left-panel p {
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+/* Panel derecho */
+.right-panel {
+    flex: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 50px;
+    background-color: #fff;
+}
+
+.form-box {
+    width: 100%;
+    max-width: 340px;
+}
+
+.form-box h2 {
+    color: #4c2fa0;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    color: #4c2fa0;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d3c6f5;
+    border-radius: 6px;
+    font-size: 15px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #7b5ce6;
+    box-shadow: 0 0 4px #cbbef7;
+}
+
+.btn {
+    width: 100%;
+    background: #6a4ae0;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: #5532d1;
+}
+
+.register-text {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.register-text a {
+    color: #6a4ae0;
+    text-decoration: none;
+    font-weight: 600;
+}
