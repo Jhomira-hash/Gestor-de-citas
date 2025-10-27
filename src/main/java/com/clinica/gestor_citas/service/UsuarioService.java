@@ -23,4 +23,8 @@ public class UsuarioService {
         }
         return Optional.empty();
     }
+
+    public Usuario registrarUsuario(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
 }

@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "*") // permite conexión desde el front
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -37,5 +37,23 @@ public class UsuarioController {
 
         return respuesta;
     }
+
+
+
+    @PostMapping("/registro")
+    public Map<String, Object> registrarUsuario(@RequestBody Usuario nuevoUsuario) {
+        Map<String, Object> respuesta = new HashMap<>();
+
+        try {
+            Usuario usuarioGuardado = usuarioService.registrarUsuario(nuevoUsuario);
+            respuesta.put("mensaje", "Usuario registrado exitosamente");
+            respuesta.put("usuario", usuarioGuardado);
+        } catch (Exception e) {
+            respuesta.put("mensaje", "Error al registrar usuario: " + e.getMessage());
+        }
+
+        return respuesta;
+    }
+
 
 }

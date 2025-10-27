@@ -25,8 +25,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
         if (response.ok && data.usuario) {
             alert(`✅ Bienvenido, ${data.usuario.nombre}!`);
-            // Redirige al inicio o panel
-            // window.location.href = "inicio.html";
+            indow.location.href = "inicio.html";
         } else {
             alert("❌ Credenciales incorrectas. Intenta nuevamente.");
         }
