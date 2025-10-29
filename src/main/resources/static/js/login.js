@@ -25,7 +25,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
         if (response.ok && data.usuario) {
             alert(`✅ Bienvenido, ${data.usuario.nombre}!`);
-            indow.location.href = "inicio.html";
+            window.location.href = "inicio.html";
         } else {
             alert("❌ Credenciales incorrectas. Intenta nuevamente.");
         }
@@ -33,4 +33,5 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         console.error("Error al conectar con el servidor:", error);
         alert("⚠️ No se pudo conectar con el servidor.");
     }
-});
+}
+);
