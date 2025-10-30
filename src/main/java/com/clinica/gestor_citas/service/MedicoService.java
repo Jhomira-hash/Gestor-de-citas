@@ -20,8 +20,9 @@ public class MedicoService {
         return medicoRepository.findAll();
     }
 
-    public List<Medico> buscarPorEspecialidadNombre(String nombre) {
-        return medicoRepository.findByEspecialidadNombre(nombre);
+    public List<Medico> listarMedicosPorEspecialidad(Long idEspecialidad) {
+        return medicoRepository.findByEspecialidad_IdEspecialidad(idEspecialidad);
     }
+
 }
 

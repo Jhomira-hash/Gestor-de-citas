@@ -301,36 +301,6 @@ footer a:hover {
     color: #ddd;
 }
 
-
-/* MODAL DE COMFIRMACION */
-#modalConfirmacion .btn-success {
-    background-color: #6f42c1; /* Morado */
-    border-color: #6f42c1;
-}
-
-#modalConfirmacion .btn-success:hover {
-    background-color: #59359a; /* Un tono más oscuro */
-    border-color: #59359a;
-}
-
-/* Botón Cancelar del modal */
-#modalConfirmacion .btn-outline-secondary {
-    color: #6f42c1;
-    border-color: #6f42c1;
-}
-
-#modalConfirmacion .btn-outline-secondary:hover {
-    background-color: #6f42c1;
-    color: #fff;
-}
-
-#modalConfirmacion .modal-header.bg-primary {
-    background-color: #6f42c1 !important;
-}
-
-
-
-
 /* ================================
    CHATBOT MODAL
 ================================ */
@@ -372,7 +342,6 @@ footer a:hover {
 #chatbotModal .input-group button {
     border-radius: 8px;
 }
-
 
 /* Botón flotante del chat */
 #chatbotBtn {

@@ -10,7 +10,6 @@ public class GestorCitasApplication {
 		SpringApplication.run(GestorCitasApplication.class, args);
 	}
 
-    //prueba para el github
+
 
 }
-kjij

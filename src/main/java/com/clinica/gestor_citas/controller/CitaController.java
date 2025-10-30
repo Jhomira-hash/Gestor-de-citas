@@ -1,37 +1,35 @@
 package com.clinica.gestor_citas.controller;
 
 import com.clinica.gestor_citas.model.Cita;
+import com.clinica.gestor_citas.model.Usuario;
 import com.clinica.gestor_citas.service.CitaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import jakarta.servlet.http.HttpSession;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/citas")
+@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
 public class CitaController {
-    private final CitaService citaService;
 
-    public CitaController(CitaService citaService) {
-        this.citaService = citaService;
-    }
-
-
-
-    @GetMapping
-    public List<Cita> listarCitas() {
-        return citaService.listarCitas();
-    }
-
+    @Autowired
+    private CitaService citaService;
 
     @PostMapping
-    public Cita crearCita(@RequestBody Cita cita) {
-        return citaService.guardarCita(cita);
-    }
+    public ResponseEntity<?> registrarCita(@RequestBody Map<String, Long> datos, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        if (usuario == null) {
+            return ResponseEntity.status(401).body("Usuario no autenticado");
+        }
 
-///si el cliente quiere cancelar su cita y
-// no conoce el id de su cita y esta no posee un nombre, como michi la identifico para borrarla pipipi
-    @DeleteMapping("/{id}")
-    public void eliminarCita(@PathVariable Long id) {
-        citaService.eliminarCita(id);
+        Long medicoId = datos.get("medicoId");
+        Long especialidadId = datos.get("especialidadId");
+        Long horarioId = datos.get("horarioId");
+
+        Cita cita = citaService.registrarCita(usuario.getIdUsuario(), medicoId, especialidadId, horarioId);
+        return ResponseEntity.ok(cita);
     }
 }

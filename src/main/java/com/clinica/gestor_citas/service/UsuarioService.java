@@ -15,6 +15,7 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
+
     public Optional<Usuario> validarLogin(String nombre, String dni, String password) {
         if (dni != null && !dni.isEmpty()) {
             return usuarioRepository.findByDniAndPassword(dni, password);
@@ -25,6 +26,15 @@ public class UsuarioService {
     }
 
     public Usuario registrarUsuario(Usuario usuario) {
+        if (usuarioRepository.findByDni(usuario.getDni()).isPresent()) {
+            throw new RuntimeException("Ya existe un usuario con ese DNI");
+        }
         return usuarioRepository.save(usuario);
     }
+
+
+    public Optional<Usuario> buscarPorNombre(String nombre) {
+        return usuarioRepository.findByNombre(nombre);
+    }
+
 }

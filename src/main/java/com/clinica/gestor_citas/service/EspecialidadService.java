@@ -15,13 +15,9 @@ public class EspecialidadService {
     public EspecialidadService(EspecialidadRepository especialidadRepository) {
         this.especialidadRepository = especialidadRepository;
     }
-
     public List<Especialidad> listarEspecialidades() {
         return especialidadRepository.findAll();
     }
 
-    public Optional<Especialidad> buscarPorNombre(String nombre) {
-        return especialidadRepository.findByNombre(nombre);
-    }
 }
 

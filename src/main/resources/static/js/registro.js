@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        // Capturamos los valores del formulario
         const usuario = {
             nombre: document.getElementById("nombre").value.trim(),
             apellido: document.getElementById("apellido").value.trim(),
@@ -14,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
             password: document.getElementById("password").value.trim()
         };
 
-        // Validación simple antes de enviar
         if (!usuario.nombre || !usuario.apellido || !usuario.dni || !usuario.email || !usuario.password) {
             alert("⚠️ Por favor, completa todos los campos obligatorios.");
             return;

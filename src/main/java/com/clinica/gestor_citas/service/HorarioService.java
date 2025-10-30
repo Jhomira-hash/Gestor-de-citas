@@ -3,30 +3,29 @@ package com.clinica.gestor_citas.service;
 import com.clinica.gestor_citas.model.Horario;
 import com.clinica.gestor_citas.model.Medico;
 import com.clinica.gestor_citas.repository.HorarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HorarioService {
 
-    private final HorarioRepository horarioRepository;
+    @Autowired
+    private HorarioRepository horarioRepository;
 
-    public HorarioService(HorarioRepository horarioRepository) {
-        this.horarioRepository = horarioRepository;
+    public List<Horario> listarPorMedico(Long medicoId) {
+        return horarioRepository.findByMedico_IdMedicoAndDisponibleTrue(medicoId);
     }
 
-    public List<Horario> horariosPorNombreMedico(String nombre) {
-        return horarioRepository.findByMedicoNombreAndDisponibleTrue(nombre);
+    public Optional<Horario> buscarHorario(Long medicoId, LocalDate fecha, LocalTime hora) {
+        return horarioRepository.findByMedico_IdMedicoAndFechaAndHora(medicoId, fecha, hora);
     }
 
-    public List<Horario> horariosPorNombreMedicoYFecha(String nombre, LocalDate fecha) {
-        return horarioRepository.findByMedicoNombreAndFechaAndDisponibleTrue(nombre, fecha);
-    }
-
-    public void reservarHorario(Horario horario) {
-        horario.setDisponible(false);
-        horarioRepository.save(horario);
+    public List<Horario> listarTodos() {
+        return horarioRepository.findAll();
     }
 }
