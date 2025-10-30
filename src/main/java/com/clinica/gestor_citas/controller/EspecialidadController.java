@@ -5,9 +5,9 @@ import com.clinica.gestor_citas.service.EspecialidadService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
 @RequestMapping("/api/especialidades")
 public class EspecialidadController {
 
@@ -17,13 +17,12 @@ public class EspecialidadController {
         this.especialidadService = especialidadService;
     }
 
+
     @GetMapping
     public List<Especialidad> listarEspecialidades() {
         return especialidadService.listarEspecialidades();
     }
 
-    @GetMapping("/{nombre}")
-    public Optional<Especialidad> buscarPorNombre(@PathVariable String nombre) {
-        return especialidadService.buscarPorNombre(nombre);
-    }
+
+
 }

@@ -4,7 +4,6 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     const identificador = document.getElementById("identificador").value.trim();
     const password = document.getElementById("password").value.trim();
 
-    // Detectar si el usuario ingresó un DNI (solo números)
     let nombre = null;
     let dni = null;
 

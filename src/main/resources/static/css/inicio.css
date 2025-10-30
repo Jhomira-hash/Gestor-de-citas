@@ -23,6 +23,10 @@ body {
 .navbar {
     padding: 0.8rem 1rem;
     transition: all 0.3s ease;
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Asegúrate de que el navbar quede por encima de otros elementos */
+    background-color: var(--white); /* Opcional: para evitar que sea transparente */
 }
 
 .navbar.scrolled {
@@ -212,6 +216,58 @@ section p {
 }
 
 /* ================================
+   FORMULARIO DE CITAS
+================================ */
+#citas form {
+    border-radius: 12px;
+    background-color: var(--light);
+}
+
+#citas label {
+    color: var(--purple-dark);
+}
+
+#citas input,
+#citas select {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+}
+
+#citas input:focus,
+#citas select:focus {
+    outline: none;
+    border-color: var(--purple);
+    box-shadow: 0 0 6px rgba(123,44,191,0.25);
+}
+
+/* Estilos de validación visual */
+.was-validated .form-control:invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.1rem rgba(220, 53, 69, 0.25);
+}
+
+.was-validated .form-control:valid {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.1rem rgba(25, 135, 84, 0.25);
+}
+
+
+/* ================================
+   MODAL DE CONFIRMACIÓN
+================================ */
+#modalConfirmacion .modal-header {
+    background-color: var(--purple);
+    color: var(--white);
+}
+
+#datosCita strong {
+    color: var(--purple-dark);
+}
+
+
+/* ================================
    CONTACTO
 ================================ */
 #contacto form input,
@@ -244,6 +300,36 @@ footer a {
 footer a:hover {
     color: #ddd;
 }
+
+
+/* MODAL DE COMFIRMACION */
+#modalConfirmacion .btn-success {
+    background-color: #6f42c1; /* Morado */
+    border-color: #6f42c1;
+}
+
+#modalConfirmacion .btn-success:hover {
+    background-color: #59359a; /* Un tono más oscuro */
+    border-color: #59359a;
+}
+
+/* Botón Cancelar del modal */
+#modalConfirmacion .btn-outline-secondary {
+    color: #6f42c1;
+    border-color: #6f42c1;
+}
+
+#modalConfirmacion .btn-outline-secondary:hover {
+    background-color: #6f42c1;
+    color: #fff;
+}
+
+#modalConfirmacion .modal-header.bg-primary {
+    background-color: #6f42c1 !important;
+}
+
+
+
 
 /* ================================
    CHATBOT MODAL
@@ -286,6 +372,7 @@ footer a:hover {
 #chatbotModal .input-group button {
     border-radius: 8px;
 }
+
 
 /* Botón flotante del chat */
 #chatbotBtn {
