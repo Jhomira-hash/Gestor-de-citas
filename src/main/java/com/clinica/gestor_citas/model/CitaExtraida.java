@@ -15,7 +15,6 @@ public class CitaExtraida {
     private String nombreMedico;
     private LocalDate fecha;
     private LocalTime hora;
-    private String sintomas;
-    private boolean datosCompletos;
+
 
 }

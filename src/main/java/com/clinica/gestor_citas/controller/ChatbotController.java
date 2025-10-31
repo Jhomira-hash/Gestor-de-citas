@@ -13,7 +13,7 @@ import java.util.UUID;
 @CrossOrigin(origins = "*")
 public class ChatbotController {
 
-    private final ChatbotService chatbotService;
+   /* private final ChatbotService chatbotService;
 
     public ChatbotController(ChatbotService chatbotService) {
         this.chatbotService = chatbotService;
@@ -43,5 +43,5 @@ public class ChatbotController {
         );
         return ResponseEntity.ok(response);
     }
-
+*/
 }

@@ -14,9 +14,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/horarios")
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:8085", allowCredentials = "true")
 public class HorarioController {
-
     @Autowired
     private HorarioService horarioService;
 
@@ -59,4 +58,6 @@ public class HorarioController {
                     .body("Formato de hora inválido. Use HH:mm o HH:mm:ss (ejemplo: 10:00 o 10:00:00)");
         }
     }
+
+
 }

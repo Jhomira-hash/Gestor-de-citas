@@ -1,10 +1,12 @@
 package com.clinica.gestor_citas.service;
 
-import com.clinica.gestor_citas.model.*;
-import com.clinica.gestor_citas.repository.UsuarioRepository; // AGREGAR ESTE IMPORT
+import com.clinica.gestor_citas.model.CitaExtraida;
+import com.clinica.gestor_citas.model.Especialidad;
+import com.clinica.gestor_citas.model.Horario;
+import com.clinica.gestor_citas.model.Medico;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,143 +18,73 @@ public class ChatbotService {
     private final MedicoService medicoService;
     private final HorarioService horarioService;
     private final EspecialidadService especialidadService;
-    private final UsuarioRepository usuarioRepository; // Ahora debería reconocerlo
-
     public ChatbotService(GroqChatService groqChatService,
                           CitaService citaService,
                           MedicoService medicoService,
                           HorarioService horarioService,
-                          EspecialidadService especialidadService,
-                          UsuarioRepository usuarioRepository) {
-        this.groqChatService = groqChatService;
-        this.citaService = citaService;
-        this.medicoService = medicoService;
-        this.horarioService = horarioService;
-        this.especialidadService = especialidadService;
-        this.usuarioRepository = usuarioRepository;
+                          EspecialidadService especialidadService){
+        this.groqChatService=groqChatService;
+        this.citaService=citaService;
+        this.horarioService=horarioService;
+        this.medicoService=medicoService;
+        this.especialidadService=especialidadService;
     }
 
-    public ChatResponse procesarMensaje(ChatRequest request) {
-        ChatResponse response = new ChatResponse();
+    public String procesarMensaje(String mensajeUsuario, Long usuarioId){
+        try {
 
-        // Procesar mensaje con Groq
-        String aiMessage = groqChatService.processMessage(
-                request.getConversationId(),
-                request.getMessage()
-        );
-
-        response.setMessage(aiMessage);
-        response.setConversationId(request.getConversationId());
-
-        // Extraer especialidades mencionadas
-        List<String> especialidades = groqChatService.extraerEspecialidadesMencionadas(aiMessage);
-        response.setEspecialidadesSugeridas(especialidades);
-
-        // Si se mencionó una especialidad, sugerir médicos
-        if (!especialidades.isEmpty()) {
-            List<Medico> medicos = medicoService.listarMedicosPorEspecialidad(especialidades.get(0));
-            response.setMedicosSugeridos(medicos);
-        }
-
-        // Verificar si hay datos completos para crear cita
-        CitaExtraida citaExtraida = groqChatService.extraerDatosCita(request.getConversationId());
-        if (citaExtraida != null && citaExtraida.isDatosCompletos()) {
-            response.setCitaExtraida(citaExtraida);
-
-            // Intentar crear la cita automáticamente
-            if (request.getUsuarioId() != null) {
-                try {
-                    Cita citaCreada = crearCitaAutomatica(citaExtraida, request.getUsuarioId());
-                    response.setCitaCreada(citaCreada);
-                    response.setMessage(response.getMessage() +
-                            "\n\n✅ ¡Cita confirmada exitosamente! Tu número de cita es: " +
-                            citaCreada.getIdCita());
-                } catch (Exception e) {
-                    response.setMessage(response.getMessage() +
-                            "\n\n⚠️ " + e.getMessage());
-                }
+            //extrae datos
+            String promt =  """
+                    Analiza este mensaje y devuelve un JSON con los campos:
+                    { "especialidad": "...", "fecha": "YYYY-MM-DD", "hora": "HH:mm" }.
+                    Mensaje: "%s"
+                    """.formatted(mensajeUsuario);
+            String respuestaGroq = groqChatService.sendMessageToGroq(promt);
+            //convertir a objeto
+            CitaExtraida  citaExtraida = groqChatService.parsearCitaDesdeTexto(respuestaGroq);
+            if (citaExtraida == null) {
+                return "No logré entender la especialidad o la fecha de tu cita. ¿Podrías repetirlo?";
             }
-        }
+            //buscar en la bdd
+            Especialidad especialidad = especialidadService
+                    .buscarPorNombre(citaExtraida.getEspecialidad())
+                    .orElse(null);
 
-        return response;
-    }
-
-    private Cita crearCitaAutomatica(CitaExtraida citaExtraida, Long usuarioId) {
-        // Buscar usuario
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioId);
-        if (usuarioOpt.isEmpty()) {
-            throw new RuntimeException("Usuario no encontrado");
-        }
-
-        // Buscar especialidad
-        Optional<Especialidad> especialidadOpt = especialidadService
-                .buscarPorNombre(citaExtraida.getEspecialidad());
-        if (especialidadOpt.isEmpty()) {
-            throw new RuntimeException("Especialidad no encontrada");
-        }
-
-        // Buscar médicos de esa especialidad
-        List<Medico> medicos = medicoService
-                .buscarPorEspecialidadNombre(citaExtraida.getEspecialidad());
-        if (medicos.isEmpty()) {
-            throw new RuntimeException("No hay médicos disponibles para esta especialidad");
-        }
-
-        // Buscar horario disponible
-        Medico medico = medicos.get(0); // Por ahora tomamos el primero
-        List<Horario> horariosDisponibles = horarioService
-                .horariosPorNombreMedicoYFecha(
-                        medico.getNombre(),
-                        citaExtraida.getFecha()
-                );
-
-        // Buscar el horario más cercano a la hora solicitada
-        Horario horarioSeleccionado = encontrarHorarioCercano(
-                horariosDisponibles,
-                citaExtraida.getHora()
-        );
-
-        if (horarioSeleccionado == null) {
-            throw new RuntimeException(
-                    "No hay horarios disponibles para la fecha solicitada. " +
-                            "Por favor, elige otra fecha."
-            );
-        }
-
-        // Crear la cita
-        Cita cita = new Cita();
-        cita.setUsuario(usuarioOpt.get());
-        cita.setMedico(medico);
-        cita.setEspecialidad(especialidadOpt.get());
-        cita.setHorario(horarioSeleccionado);
-
-        // Reservar el horario
-        horarioService.reservarHorario(horarioSeleccionado);
-
-        // Guardar la cita
-        return citaService.registrarCita(cita);
-    }
-
-    private Horario encontrarHorarioCercano(List<Horario> horarios, LocalTime horaDeseada) {
-        if (horarios.isEmpty()) return null;
-
-        Horario mejorOpcion = horarios.get(0);
-        long menorDiferencia = Math.abs(
-                mejorOpcion.getHora().toSecondOfDay() - horaDeseada.toSecondOfDay()
-        );
-
-        for (Horario horario : horarios) {
-            long diferencia = Math.abs(
-                    horario.getHora().toSecondOfDay() - horaDeseada.toSecondOfDay()
-            );
-            if (diferencia < menorDiferencia) {
-                menorDiferencia = diferencia;
-                mejorOpcion = horario;
+            if (especialidad == null) {
+                return "No encontré la especialidad " + citaExtraida.getEspecialidad() + " en el sistema.";
             }
+            List<Medico> medicos = medicoService.listarMedicosPorEspecialidad(especialidad.getIdEspecialidad());
+            if (medicos.isEmpty()) {
+                return "No hay médicos disponibles para " + especialidad.getNombre();
+            }
+            Medico medico = medicos.get(0);
+
+            //buscar horario
+            Optional<Horario> horarioOpt = horarioService.buscarHorario(
+                    medico.getIdMedico(),
+                    citaExtraida.getFecha(),
+                    citaExtraida.getHora()
+            );
+            if (horarioOpt.isEmpty()) {
+                return "No hay horario disponible para el " + citaExtraida.getFecha() +
+                        " a las " + citaExtraida.getHora();
+            }
+
+            Horario horario = horarioOpt.get();
+
+
+            //registrar cita
+
+            citaService.registrarCita(usuarioId, medico.getIdMedico(),
+                    especialidad.getIdEspecialidad(), horario.getIdHorario());
+
+            return "He reservado tu cita con el Dr. " + medico.getNombre() +
+                    " (" + especialidad.getNombre() + ") para el " +
+                    citaExtraida.getFecha() + " a las " + citaExtraida.getHora() + ".";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Ocurrió un error al procesar tu solicitud: " + e.getMessage();
         }
-
-        return mejorOpcion;
     }
-
-
 }

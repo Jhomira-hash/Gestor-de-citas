@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChatRequest {
     private String message;
-    private String conversationId;
-    private Long usuarioId; // Para vincular con el usuario logueado
+    private Long usuarioId;
+
 }
