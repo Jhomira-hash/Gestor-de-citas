@@ -18,5 +18,4 @@ public class GroqConfig {
                 .requestFactory(() -> factory)
                 .build();
     }
-
 }
