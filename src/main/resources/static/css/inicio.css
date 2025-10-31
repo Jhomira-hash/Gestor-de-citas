@@ -336,8 +336,8 @@ footer a:hover {
 ================================ */
 #chatbotModal {
     position: fixed;
-    bottom: 80px;
-    right: 20px;
+    bottom: 20px;
+    right: 90px;
     width: 350px;
     max-height: 500px;
     background: rgba(255, 255, 255, 0.95); /* Fondo más opaco */
@@ -402,6 +402,7 @@ footer a:hover {
     transform: scale(1.1);
 }
 
+
 /* Animación */
 @keyframes fadeInUp {
     from {
@@ -413,4 +414,6 @@ footer a:hover {
         transform: translateY(0);
     }
 }
+
+
 

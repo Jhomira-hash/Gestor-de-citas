@@ -18,6 +18,11 @@ public class EspecialidadService {
     public List<Especialidad> listarEspecialidades() {
         return especialidadRepository.findAll();
     }
-
+    public Optional<Especialidad> buscarPorNombre(String nombre) {
+        return especialidadRepository.findAll()
+                .stream()
+                .filter(e -> e.getNombre().equalsIgnoreCase(nombre))
+                .findFirst();
+    }
 }
 

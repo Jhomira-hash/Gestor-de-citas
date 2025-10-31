@@ -44,4 +44,17 @@ public class CitaService {
 
         return citaRepository.save(cita);
     }
+
+    public Cita registrarCita(Cita cita) {
+        if (cita.getUsuario() == null || cita.getMedico() == null ||
+                cita.getEspecialidad() == null || cita.getHorario() == null) {
+            throw new RuntimeException("Datos incompletos para registrar la cita");
+        }
+
+        // Marcar el horario como no disponible
+        cita.getHorario().setDisponible(false);
+        horarioRepository.save(cita.getHorario());
+
+        return citaRepository.save(cita);
+    }
 }

@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 //  autocompletar los datos del usuario logueado
 async function cargarPerfilUsuario() {
     try {
-        const res = await fetch("http://localhost:8080/api/usuarios/perfil", {
+        const res = await fetch("http://localhost:8085/api/usuarios/perfil", {
             credentials: "include"
         });
 
@@ -38,7 +38,7 @@ function inicializarSelects() {
     const selectHora = document.getElementById('hora');
 
     // Cargar especialidades
-    fetch('http://localhost:8080/api/especialidades')
+    fetch('http://localhost:8085/api/especialidades')
         .then(res => res.json())
         .then(data => {
             data.forEach(esp => {
@@ -60,7 +60,7 @@ function inicializarSelects() {
         selectFecha.innerHTML = '<option selected disabled>Seleccione una fecha</option>';
         selectHora.innerHTML = '<option selected disabled>Seleccione una hora</option>';
 
-        fetch(`http://localhost:8080/api/medicos/especialidad/${idEspecialidad}`)
+        fetch(`http://localhost:8085/api/medicos/especialidad/${idEspecialidad}`)
             .then(res => res.json())
             .then(data => {
                 data.forEach(med => {
@@ -82,7 +82,7 @@ function inicializarSelects() {
         selectFecha.innerHTML = '<option selected disabled>Seleccione una fecha</option>';
         selectHora.innerHTML = '<option selected disabled>Seleccione una hora</option>';
 
-        fetch(`http://localhost:8080/api/horarios/medico/${idMedico}`)
+        fetch(`http://localhost:8085/api/horarios/medico/${idMedico}`)
             .then(res => res.json())
             .then(data => {
                 if (!data || data.length === 0) {
@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             // Buscar horario específico
             const horarioResponse = await fetch(
-                `http://localhost:8080/api/horarios/buscar?medicoId=${medicoId}&fecha=${fecha}&hora=${hora}`,
+                `http://localhost:8085/api/horarios/buscar?medicoId=${medicoId}&fecha=${fecha}&hora=${hora}`,
                 { credentials: "include" }
             );
 
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Horario encontrado:", horario);
 
             // Registrar cita
-            const citaResponse = await fetch("http://localhost:8080/api/citas", {
+            const citaResponse = await fetch("http://localhost:8085/api/citas", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
@@ -246,7 +246,7 @@ async function registrarCita() {
 
         // Buscar horario exacto
         const horarioRes = await fetch(
-            `http://localhost:8080/api/horarios/buscar?medicoId=${medicoId}&fecha=${fecha}&hora=${hora}`,
+            `http://localhost:8085/api/horarios/buscar?medicoId=${medicoId}&fecha=${fecha}&hora=${hora}`,
             { credentials: "include" }
         );
 
@@ -254,7 +254,7 @@ async function registrarCita() {
 
         const horario = await horarioRes.json();
 
-        const citaRes = await fetch("http://localhost:8080/api/citas", {
+        const citaRes = await fetch("http://localhost:8085/api/citas", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",

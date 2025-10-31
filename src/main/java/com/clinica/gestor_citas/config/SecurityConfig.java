@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -27,7 +28,15 @@ public class SecurityConfig {
                                 "/api/medicos/**",
                                 "/api/horarios/**",
                                 "/api/citas/**",
-                                "/api/usuarios/**"
+                                "/api/usuarios/**",
+                                "/api/chatbot/**",
+                                "/api/chatbot/iniciar",
+                                "/api/chatbot/chat",
+                                "/api/prueba/**",
+                                "/api/prueba/chat",
+                                "/api/prueba/chat1",
+                                ("/api/agente/**")
+
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -52,9 +61,11 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:8080")
+                        .allowedOrigins("http://localhost:8085")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
                         .allowCredentials(true);
+
             }
         };
     }

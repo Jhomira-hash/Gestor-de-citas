@@ -24,5 +24,13 @@ public class MedicoService {
         return medicoRepository.findByEspecialidad_IdEspecialidad(idEspecialidad);
     }
 
+    public List<Medico> listarMedicosPorNombreEspecialidad(String nombreEspecialidad) {
+        return medicoRepository.findAll()
+                .stream()
+                .filter(m -> m.getEspecialidad() != null &&
+                        m.getEspecialidad().getNombre().equalsIgnoreCase(nombreEspecialidad))
+                .toList();
+    }
+
 }
 

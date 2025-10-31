@@ -24,6 +24,20 @@ public class HorarioService {
     public Optional<Horario> buscarHorario(Long medicoId, LocalDate fecha, LocalTime hora) {
         return horarioRepository.findByMedico_IdMedicoAndFechaAndHora(medicoId, fecha, hora);
     }
+    public List<Horario> horariosPorNombreMedicoYFecha(String nombreMedico, LocalDate fecha) {
+        return horarioRepository.findAll()
+                .stream()
+                .filter(h -> h.getMedico() != null &&
+                        h.getMedico().getNombre().equalsIgnoreCase(nombreMedico) &&
+                        h.getFecha().equals(fecha) &&
+                        h.getDisponible())
+                .toList();
+    }
+
+    public void reservarHorario(Horario horario) {
+        horario.setDisponible(false);
+        horarioRepository.save(horario);
+    }
 
     public List<Horario> listarTodos() {
         return horarioRepository.findAll();

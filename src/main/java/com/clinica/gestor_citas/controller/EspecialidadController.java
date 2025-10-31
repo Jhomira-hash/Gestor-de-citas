@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:8085", allowCredentials = "true")
 @RequestMapping("/api/especialidades")
 public class EspecialidadController {
 

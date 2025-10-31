@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:8085", allowCredentials = "true")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
