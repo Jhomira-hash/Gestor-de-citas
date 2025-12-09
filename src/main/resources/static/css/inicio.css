@@ -339,40 +339,59 @@ footer a:hover {
     bottom: 20px;
     right: 90px;
     width: 350px;
-    max-height: 500px;
-    background: rgba(255, 255, 255, 0.95); /* Fondo más opaco */
-    backdrop-filter: blur(6px); /* Efecto difuminado */
-    border: 2px solid rgba(0,0,0,0.8); /* Borde negro */
-    border-radius: 12px; /* Bordes redondeados */
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3); /* Sombra elegante */
-    display: none;
+    height: 500px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(6px);
+    border: 2px solid rgba(0,0,0,0.8);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     z-index: 2000;
-    animation: fadeInUp 0.3s ease;
+
+    /* FLEXBOX para estructura vertical perfecta */
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-#chatbotModal .card-header.bg-purple {
+/* 1. CABECERA (Fija) */
+#chatbotModal > div:first-child {
+    flex: 0 0 auto;
     background: rgba(123, 44, 191, 0.95);
-    color: white;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    border-bottom: 2px solid rgba(0,0,0,0.8); /* Línea negra bajo el header */
+    border-bottom: 2px solid rgba(0,0,0,0.8);
 }
 
-#chatbotModal .card-body {
-    height: 300px;
+/* 2. CONTENIDO DEL CHAT (Scrollable) */
+#chatContent {
+    flex: 1 1 auto;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 15px;
-    font-size: 0.9rem;
+    height: 100%;
+    background-color: #fff;
+    scroll-behavior: smooth;
 }
 
-#chatbotModal .input-group input {
-    border-radius: 8px;
+/* 3. PIE DE PÁGINA / INPUT (Fijo) */
+#chatbotModal > div:last-child {
+    flex: 0 0 auto; /* No crece ni encoge */
+    background-color: #f8f9fa;
+    border-top: 1px solid #ddd;
 }
 
-#chatbotModal .input-group button {
-    border-radius: 8px;
+/* Estilo del scrollbar */
+#chatContent::-webkit-scrollbar {
+    width: 8px;
 }
-
+#chatContent::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+#chatContent::-webkit-scrollbar-thumb {
+    background: #7b2cbf;
+    border-radius: 4px;
+}
+#chatContent::-webkit-scrollbar-thumb:hover {
+    background: #5a189a;
+}
 
 /* Botón flotante del chat */
 #chatbotBtn {
@@ -386,22 +405,34 @@ footer a:hover {
     height: 60px;
     border: none;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    font-size: 1.8rem; /* Tamaño del emoji/ícono */
+    font-size: 1.8rem;
     z-index: 2001;
     transition: transform 0.2s ease-in-out;
-
-    /* Centrado del emoji */
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1; /* Ajusta para evitar desbalance */
     padding: 0;
+    line-height: 1;
 }
 
 #chatbotBtn:hover {
     transform: scale(1.1);
 }
 
+/* Estilos para el contenido HTML dentro del agente */
+#chatContent ul {
+    margin: 5px 0;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+#chatContent li {
+    margin-bottom: 3px;
+}
+
+#chatContent b {
+    font-weight: 600;
+}
 
 /* Animación */
 @keyframes fadeInUp {

@@ -1,10 +1,18 @@
 document.addEventListener("DOMContentLoaded", async () => {
+    // Cargar datos del usuario logueado
     await cargarPerfilUsuario();
+
+    // Inicializar lógica de selects
     inicializarSelects();
+
+    // Configurar botón de reserva
+    const btnReservar = document.getElementById("btnReservar");
+    if (btnReservar) {
+        btnReservar.addEventListener("click", confirmarCita);
+    }
 });
 
-
-//  autocompletar los datos del usuario logueado
+// --- CARGAR DATOS USUARIO ---
 async function cargarPerfilUsuario() {
     try {
         const res = await fetch("http://localhost:8085/api/usuarios/perfil", {
@@ -12,14 +20,13 @@ async function cargarPerfilUsuario() {
         });
 
         if (!res.ok) {
-            console.warn("⚠️ No se pudo obtener el perfil del usuario. Código:", res.status);
+            console.warn("⚠️ No se pudo obtener el perfil del usuario.");
             return;
         }
 
         const usuario = await res.json();
-
-        // ✅ Autocompletar campos del formulario
-        document.getElementById("nombre").value = usuario.nombre || "";
+        // Llenamos los inputs (que están disabled)
+        document.getElementById("nombre").value = usuario.nombre + " " + usuario.apellido || "";
         document.getElementById("dni").value = usuario.dni || "";
         document.getElementById("telefono").value = usuario.telefono || "";
         document.getElementById("email").value = usuario.email || "";
@@ -29,76 +36,67 @@ async function cargarPerfilUsuario() {
     }
 }
 
-
-// cargar especialidad, médico, fecha y hora
+// --- LOGICA DE SELECTS CASCADA ---
 function inicializarSelects() {
     const selectEspecialidad = document.getElementById('especialidad');
     const selectMedico = document.getElementById('medico');
     const selectFecha = document.getElementById('fecha');
     const selectHora = document.getElementById('hora');
 
-    // Cargar especialidades
+    // A. Cargar Especialidades
     fetch('http://localhost:8085/api/especialidades')
         .then(res => res.json())
         .then(data => {
+            selectEspecialidad.innerHTML = '<option selected disabled value="">Seleccione una especialidad</option>';
             data.forEach(esp => {
                 const option = document.createElement('option');
-                option.value = esp.idEspecialidad; // 👈 asegúrate que coincida con tu entidad
+                option.value = esp.idEspecialidad;
                 option.textContent = esp.nombre;
                 selectEspecialidad.appendChild(option);
             });
         })
         .catch(error => console.error('Error cargando especialidades:', error));
 
-
-    // Cargar médicos según especialidad
+    // B. Cargar Médicos al cambiar Especialidad
     selectEspecialidad.addEventListener('change', () => {
         const idEspecialidad = selectEspecialidad.value;
 
-        // Limpiar selects dependientes
-        selectMedico.innerHTML = '<option selected disabled>Seleccione un médico</option>';
-        selectFecha.innerHTML = '<option selected disabled>Seleccione una fecha</option>';
-        selectHora.innerHTML = '<option selected disabled>Seleccione una hora</option>';
+        // Reset selects
+        selectMedico.innerHTML = '<option selected disabled value="">Seleccione un médico</option>';
+        selectFecha.innerHTML = '<option selected disabled value="">Seleccione una fecha</option>';
+        selectHora.innerHTML = '<option selected disabled value="">Seleccione una hora</option>';
+
+        if(!idEspecialidad) return;
 
         fetch(`http://localhost:8085/api/medicos/especialidad/${idEspecialidad}`)
             .then(res => res.json())
             .then(data => {
                 data.forEach(med => {
                     const option = document.createElement('option');
-                    option.value = med.idMedico; // 👈 asegúrate que coincida con tu entidad
-                    option.textContent = `${med.nombre} ${med.apellido}`;
+                    option.value = med.idMedico;
+                    option.textContent = `Dr. ${med.nombre} ${med.apellido}`;
                     selectMedico.appendChild(option);
                 });
             })
             .catch(error => console.error('Error cargando médicos:', error));
     });
 
-
-    // Cargar horarios según médico
+    // C. Cargar Horarios al cambiar Médico
     selectMedico.addEventListener('change', () => {
         const idMedico = selectMedico.value;
+        selectFecha.innerHTML = '<option selected disabled value="">Seleccione una fecha</option>';
+        selectHora.innerHTML = '<option selected disabled value="">Seleccione una hora</option>';
 
-
-        selectFecha.innerHTML = '<option selected disabled>Seleccione una fecha</option>';
-        selectHora.innerHTML = '<option selected disabled>Seleccione una hora</option>';
+        if(!idMedico) return;
 
         fetch(`http://localhost:8085/api/horarios/medico/${idMedico}`)
             .then(res => res.json())
             .then(data => {
-                if (!data || data.length === 0) {
-                    console.warn("⚠️ No hay horarios disponibles para este médico.");
-                    return;
-                }
+                if (!data || data.length === 0) return;
 
-                // Filtrar solo horarios disponibles
                 const disponibles = data.filter(h => h.disponible === true);
-                if (disponibles.length === 0) {
-                    console.warn("⚠️ Todos los horarios están ocupados.");
-                    return;
-                }
-
-                // Extraer fechas únicas
                 const fechasUnicas = [...new Set(disponibles.map(h => h.fecha))];
+
                 fechasUnicas.forEach(fecha => {
                     const option = document.createElement('option');
                     option.value = fecha;
@@ -106,16 +104,16 @@ function inicializarSelects() {
                     selectFecha.appendChild(option);
                 });
 
-                // Cargar horas al seleccionar una fecha
+                // D. Cargar Horas al seleccionar Fecha
                 selectFecha.addEventListener('change', () => {
                     const fechaSeleccionada = selectFecha.value;
-                    selectHora.innerHTML = '<option selected disabled>Seleccione una hora</option>';
+                    selectHora.innerHTML = '<option selected disabled value="">Seleccione una hora</option>';
 
                     const horas = disponibles.filter(h => h.fecha === fechaSeleccionada);
                     horas.forEach(h => {
                         const option = document.createElement('option');
                         option.value = h.hora;
-                        option.textContent = h.hora.substring(0, 5); // formato HH:mm
+                        option.textContent = h.hora.substring(0, 5); // HH:mm
                         selectHora.appendChild(option);
                     });
                 });
@@ -123,104 +121,34 @@ function inicializarSelects() {
             .catch(error => console.error('Error cargando horarios:', error));
     });
 }
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("formCita");
 
-    if (!form) {
-        console.error("❌ No se encontró el formulario con id='formCita'");
-        return;
-    }
-
-    console.log("✅ Script cargado, formulario detectado");
-
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        console.log("🚀 Evento submit detectado correctamente");
-
-        const especialidadId = document.querySelector("#especialidad").value;
-        const medicoId = document.querySelector("#medico").value;
-        const fecha = document.querySelector("#fecha").value;
-        const hora = document.querySelector("#hora").value;
-
-        if (!especialidadId || !medicoId || !fecha || !hora) {
-            alert("Por favor, completa todos los campos antes de agendar la cita.");
-            return;
-        }
-
-        try {
-            // Buscar horario específico
-            const horarioResponse = await fetch(
-                `http://localhost:8085/api/horarios/buscar?medicoId=${medicoId}&fecha=${fecha}&hora=${hora}`,
-                { credentials: "include" }
-            );
-
-            if (!horarioResponse.ok) throw new Error("No se pudo obtener el horario seleccionado.");
-
-            const horario = await horarioResponse.json();
-            console.log("Horario encontrado:", horario);
-
-            // Registrar cita
-            const citaResponse = await fetch("http://localhost:8085/api/citas", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({
-                    medicoId: parseInt(medicoId),
-                    especialidadId: parseInt(especialidadId),
-                    horarioId: horario.idHorario,
-                }),
-            });
-
-            if (!citaResponse.ok) throw new Error("Error al registrar la cita.");
-
-            const citaGuardada = await citaResponse.json();
-            console.log("Cita registrada:", citaGuardada);
-
-            alert("✅ Cita registrada correctamente");
-            // window.location.href = "/html/misCitas.html"; // opcional
-
-        } catch (error) {
-            console.error(error);
-            alert("❌ " + error.message);
-        }
-    });
-});
-
-
-
-
-//MODALLLL DE CONFIRMACIONNN////
-document.addEventListener("DOMContentLoaded", () => {
-    const btnReservar = document.getElementById("btnReservar");
-
-    if (btnReservar) {
-        btnReservar.addEventListener("click", confirmarCita);
-    }
-});
-
+// --- FUNCIÓN CONFIRMAR CITA (Aquí estaba el error visual) ---
 function confirmarCita() {
     const nombre = document.getElementById("nombre").value;
     const dni = document.getElementById("dni").value;
     const telefono = document.getElementById("telefono").value;
     const email = document.getElementById("email").value;
+
     const especialidadSelect = document.getElementById("especialidad");
     const medicoSelect = document.getElementById("medico");
     const fecha = document.getElementById("fecha").value;
     const hora = document.getElementById("hora").value;
 
-    if (!nombre || !dni || !telefono || !email || !especialidadSelect.value || !medicoSelect.value || !fecha || !hora) {
-        alert("⚠️ Por favor, completa todos los campos antes de continuar.");
+    // Validación
+    if (!especialidadSelect.value || !medicoSelect.value || !fecha || !hora) {
+        alert("⚠️ Por favor, selecciona Especialidad, Médico, Fecha y Hora.");
         return;
     }
 
+    // Generar HTML del Modal
     const resumenHTML = `
     <ul class="list-group list-group-flush">
-      <li class="list-group-item"><strong>👤 Nombre:</strong> ${nombre}</li>
+      <li class="list-group-item"><strong>👤 Paciente:</strong> ${nombre}</li>
       <li class="list-group-item"><strong>🆔 DNI:</strong> ${dni}</li>
       <li class="list-group-item"><strong>📞 Teléfono:</strong> ${telefono}</li>
       <li class="list-group-item"><strong>✉️ Correo:</strong> ${email}</li>
-      <li class="list-group-item"><strong>🏥 Especialidad:</strong> ${especialidadSelect.selectedOptions[0].text}</li>
-      <li class="list-group-item"><strong>🩺 Médico:</strong> ${medicoSelect.selectedOptions[0].text}</li>
+      <li class="list-group-item"><strong>🏥 Especialidad:</strong> ${especialidadSelect.options[especialidadSelect.selectedIndex].text}</li>
+      <li class="list-group-item"><strong>🩺 Médico:</strong> ${medicoSelect.options[medicoSelect.selectedIndex].text}</li>
       <li class="list-group-item"><strong>📅 Fecha:</strong> ${fecha}</li>
       <li class="list-group-item"><strong>⏰ Hora:</strong> ${hora}</li>
     </ul>
@@ -228,16 +156,26 @@ function confirmarCita() {
 
     document.getElementById("datosCita").innerHTML = resumenHTML;
 
-    const modal = new bootstrap.Modal(document.getElementById("modalConfirmacion"));
+    // 4. Mostrar Modal
+    const modalElement = document.getElementById("modalConfirmacion");
+    const modal = new bootstrap.Modal(modalElement);
     modal.show();
 
-    document.getElementById("btnConfirmarEnvio").onclick = async () => {
-        await registrarCita();
+    // 5. Configurar el botón "Confirmar" del modal
+    const btnConfirmar = document.getElementById("btnConfirmarEnvio");
+
+    // Limpiamos eventos anteriores para evitar duplicados
+    const nuevoBtn = btnConfirmar.cloneNode(true);
+    btnConfirmar.parentNode.replaceChild(nuevoBtn, btnConfirmar);
+
+    nuevoBtn.onclick = async () => {
+        await enviarReservaBackend();
         modal.hide();
     };
 }
 
-async function registrarCita() {
+// --- ENVÍO AL BACKEND ---
+async function enviarReservaBackend() {
     try {
         const especialidadId = document.getElementById("especialidad").value;
         const medicoId = document.getElementById("medico").value;
@@ -250,10 +188,10 @@ async function registrarCita() {
             { credentials: "include" }
         );
 
-        if (!horarioRes.ok) throw new Error("No se encontró el horario.");
-
+        if (!horarioRes.ok) throw new Error("No se encontró el horario disponible.");
         const horario = await horarioRes.json();
 
+        // Registrar
         const citaRes = await fetch("http://localhost:8085/api/citas", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -267,33 +205,31 @@ async function registrarCita() {
 
         if (!citaRes.ok) throw new Error("Error al registrar la cita.");
 
-        const cita = await citaRes.json();
-        console.log("✅ Cita registrada:", cita);
-
         mostrarExitoModal();
 
     } catch (err) {
         console.error("❌ Error:", err);
-        alert("Ocurrió un error al registrar la cita.");
+        alert("Ocurrió un error: " + err.message);
     }
 }
 
 function mostrarExitoModal() {
+    // Si ya existe el modal de éxito, bórralo antes de crear uno nuevo
+    const existingModal = document.getElementById("modalExito");
+    if (existingModal) existingModal.remove();
+
     const exitoModal = document.createElement("div");
     exitoModal.innerHTML = `
     <div class="modal fade" id="modalExito" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center border-0 rounded-4 p-4">
-          <div class="text-success fs-1 mb-3">
-            <i class="bi bi-check-circle-fill"></i>
-          </div>
+          <div class="text-success fs-1 mb-3"><i class="bi bi-check-circle-fill" style="font-size: 3rem;"></i></div>
           <h5 class="fw-bold text-success">¡Cita Confirmada!</h5>
           <p class="text-secondary mb-3">Tu cita ha sido registrada correctamente.</p>
           <button class="btn btn-success w-50 mx-auto" data-bs-dismiss="modal">Aceptar</button>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
     document.body.appendChild(exitoModal);
     new bootstrap.Modal(document.getElementById("modalExito")).show();
 }

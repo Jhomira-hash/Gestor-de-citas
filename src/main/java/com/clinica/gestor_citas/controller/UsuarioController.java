@@ -24,7 +24,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public UsuarioController(UsuarioService usuarioService, UsuarioRepository usuarioRepository) {
         this.usuarioService = usuarioService;
