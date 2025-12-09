@@ -19,11 +19,8 @@ server:
     connection-timeout: 60000
   port: 8085
 
-# Groq API Configuration
-groq:
-  api:
-    key: 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
-    url: https://api.groq.com/openai/v1/chat/completions
+# eliminacion de ApiKey
+
 
 # Logging para debug
 logging:
