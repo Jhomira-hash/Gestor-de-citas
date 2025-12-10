@@ -10,11 +10,27 @@ document.addEventListener("DOMContentLoaded", () => {
   let conversationHistory = JSON.parse(sessionStorage.getItem("clinicaChatHistory")) || [];
   let appointmentState = JSON.parse(sessionStorage.getItem("clinicaAppointmentState")) || {};
 
+  // LÓGICA DE AUTO-APERTURA
+  if (sessionStorage.getItem("autoOpenChat") === "true") {
+      modal.style.display = "flex";
+      sessionStorage.removeItem("autoOpenChat");
+  }
   // Cargar historial
   conversationHistory.forEach(chat => addMessageToUI(chat.role, chat.content));
 
   // Restaurar estado del formulario (Autocompletado al cargar página)
   restaurarEstadoFormulario();
+
+  // ESCUCHA DE EVENTO: CITA REGISTRADA CON ÉXITO
+    document.addEventListener('citaRegistrada', () => {
+      console.log("🤖 Chatbot: Cita detectada, iniciando despedida...");
+
+      saveAndShowMessage("assistant", "¡Excelente! Tu cita ha sido confirmada con éxito. 🎉<br>Ha sido un placer ayudarte. ¡Cuídate mucho! 👋");
+      setTimeout(() => {
+          resetConversation(true);
+          modal.style.display = "none";
+      }, 4000);
+      });
 
   function addMessageToUI(role, text) {
       const msgDiv = document.createElement("div");
@@ -59,34 +75,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // 2. Seleccionar Médico (Llega especialidad + medico)
       else if (data.action === "SELECCIONAR_MEDICO" && data.predictedSpecialty) {
-          // data.especialidadId = ID especialidad
-          // data.predictedSpecialty = ID médico
           console.log("Bot selecciona médico ID:", data.predictedSpecialty);
           actualizarEstadoYSelect(data.especialidadId, data.predictedSpecialty);
       }
 
       // 3. Redirigir
       else if (data.action === "REDIRIGIR_CITA") {
-          if (!window.location.href.includes("cita.html")) {
-              setTimeout(() => { window.location.href = "cita.html"; }, 1500);
-          }
-      }
+                if (!window.location.href.includes("cita.html")) {
+                    sessionStorage.setItem("autoOpenChat", "true");
+
+                    setTimeout(() => { window.location.href = "cita.html"; }, 1500);
+                }
+            }
 
       // 4. Confirmar Cita
       else if (data.action === "CONFIRMAR_CITA") {
-          const btnReservar = document.getElementById("btnReservar");
-          if (btnReservar) {
-             // Validamos ANTES de hacer clic por si el bot se adelanta
-             const fecha = document.getElementById("fecha")?.value;
-             const hora = document.getElementById("hora")?.value;
+                const btnReservar = document.getElementById("btnReservar");
+                if (btnReservar) {
+                   const fecha = document.getElementById("fecha")?.value;
+                   const hora = document.getElementById("hora")?.value;
 
-             if (!fecha || !hora) {
-                 saveAndShowMessage("assistant", "⚠️ Espera, aún falta seleccionar la fecha y hora en el formulario. Por favor elígelas y avísame.");
-             } else {
-                 btnReservar.click();
-             }
-          }
-      }
+                   if (!fecha || !hora) {
+                       saveAndShowMessage("assistant", "⚠️ Espera, aún falta seleccionar la fecha y hora en el formulario. Por favor elígelas y avísame.");
+                   } else {
+                       btnReservar.click();
+                   }
+                }
+            }
     })
     .catch(error => console.error("Error:", error));
   }

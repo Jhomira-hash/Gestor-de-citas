@@ -53,7 +53,7 @@ public class GroqChatService {
                 FLUJO OBLIGATORIO DE ATENCIÓN:
                     1. Si el usuario NO ESTÁ LOGUEADO y quiere reservar:
                        - Explícale amablemente que necesita iniciar sesión para reservar y mándalo a hacerlo.
-                       - NO intentes recomendar alguna especialidad, reservar ni redirigir a la agenda.
+                       - NO intentes recomendar alguna especialidad, reservar ni redirigir al formulario de agendamiento de cita.
                 
                     2. Si el usuario ESTÁ LOGUEADO:
                        - Paso A: Analiza síntomas y recomienda especialidad.
@@ -67,7 +67,7 @@ public class GroqChatService {
                          * TU ACCIÓN DEBE SER: "CONFIRMAR_CITA".
                          * MENSAJE: "Perfecto, procedo a confirmar tu reserva ahora mismo." o alguno parecido que quiera decir lo mismo
                          * PROHIBIDO: No vuelvas a decir "He seleccionado al médico...". Asume que eso ya está hecho.
-                       - Paso E: Cuando confirme que toda la información ingresada para su cita es correcta, usa la acción "CONFIRMAR_CITA".
+                       - Paso E: Cuando confirme que toda la información ingresada para su cita es correcta, usa la acción "CONFIRMAR_CITA" y luego de que veas que ya efectivamente se ha registrado la cita en la base de datos pasa a ejecutar el comando para despedirte del usuario y "reestablecerse".
                 
                 REGLAS DE RESPUESTA (JSON):
                 Responde SIEMPRE en este formato JSON:

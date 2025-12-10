@@ -1,52 +1,48 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    // Cargar datos del usuario logueado
-    await cargarPerfilUsuario();
 
-    // Inicializar lógica de selects
-    inicializarSelects();
+    // 1. GESTIÓN DE SESIÓN Y NAVBAR
+        const usuario = JSON.parse(localStorage.getItem("usuario"));
+        const btnLogin = document.querySelector("#btnLogin");
+        const menuVerCitas = document.querySelector("#menuVerCitas");
 
-    // Configurar botón de reserva
-    const btnReservar = document.getElementById("btnReservar");
-    if (btnReservar) {
-        btnReservar.addEventListener("click", confirmarCita);
-    }
-});
+        if (usuario) {
+            console.log("Usuario logeado:", usuario);
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Obtener usuario del localStorage
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
+            if (menuVerCitas) menuVerCitas.style.display = "block";
 
-    const btnLogin = document.querySelector("#btnLogin");
-    const menuVerCitas = document.querySelector("#menuVerCitas");
+            if (btnLogin) {
+                btnLogin.textContent = "Cerrar sesión";
+                btnLogin.style.display = "block";
+                btnLogin.href = "#";
+                btnLogin.addEventListener("click", () => {
+                    localStorage.removeItem("usuario");
+                    location.reload();
+                });
+            }
 
-    if (!usuario) {
-        console.log("No hay usuario logeado.");
+            await cargarPerfilUsuario();
 
-        if (btnLogin) {
-            btnLogin.textContent = "Iniciar sesión";
-            btnLogin.style.display = "block";
-            btnLogin.href = "login.html";
+        } else {
+            console.log("No hay usuario logeado.");
+
+            if (btnLogin) {
+                btnLogin.textContent = "Iniciar sesión";
+                btnLogin.style.display = "block";
+                btnLogin.href = "login.html";
+            }
+
+            if (menuVerCitas) menuVerCitas.style.display = "none";
+            window.location.href = "login.html";
         }
 
-        if (menuVerCitas) menuVerCitas.style.display = "none";
-
-        return;
-    }
-
-    console.log("Usuario logeado:", usuario);
-
-    if (menuVerCitas) menuVerCitas.style.display = "block";
-
-    if (btnLogin) {
-        btnLogin.textContent = "Cerrar sesión";
-        btnLogin.style.display = "block";
-        btnLogin.href = "#"; // Prevenir navegación
-        btnLogin.addEventListener("click", () => {
-            localStorage.removeItem("usuario"); // Elimina el usuario
-            location.reload(); // Recargar la página
-        });
-    }
+        // 2. INICIALIZACIÓN DEL FORMULARIO
+        inicializarSelects();
+        const btnReservar = document.getElementById("btnReservar");
+        if (btnReservar) {
+            btnReservar.addEventListener("click", confirmarCita);
+        }
 });
+
 
 async function cargarPerfilUsuario() {
     try {
@@ -60,7 +56,6 @@ async function cargarPerfilUsuario() {
         }
 
         const usuario = await res.json();
-        // Llenamos los inputs (que están disabled)
         document.getElementById("nombre").value = usuario.nombre + " " + usuario.apellido || "";
         document.getElementById("dni").value = usuario.dni || "";
         document.getElementById("telefono").value = usuario.telefono || "";
@@ -147,7 +142,7 @@ function inicializarSelects() {
                     horas.forEach(h => {
                         const option = document.createElement('option');
                         option.value = h.hora;
-                        option.textContent = h.hora.substring(0, 5); // HH:mm
+                        option.textContent = h.hora.substring(0, 5);
                         selectHora.appendChild(option);
                     });
                 });
@@ -188,15 +183,10 @@ function confirmarCita() {
 
     document.getElementById("datosCita").innerHTML = resumenHTML;
 
-    // 4. Mostrar Modal
-    const modalElement = document.getElementById("modalConfirmacion");
-    const modal = new bootstrap.Modal(modalElement);
+    const modal = new bootstrap.Modal(document.getElementById("modalConfirmacion"));
     modal.show();
 
-    // 5. Configurar el botón "Confirmar" del modal
     const btnConfirmar = document.getElementById("btnConfirmarEnvio");
-
-    // Limpiamos eventos anteriores para evitar duplicados
     const nuevoBtn = btnConfirmar.cloneNode(true);
     btnConfirmar.parentNode.replaceChild(nuevoBtn, btnConfirmar);
 
@@ -235,7 +225,6 @@ async function enviarReservaBackend() {
         });
 
         if (!citaRes.ok) throw new Error("Error al registrar la cita.");
-
         mostrarExitoModal();
 
     } catch (err) {
@@ -245,7 +234,6 @@ async function enviarReservaBackend() {
 }
 
 function mostrarExitoModal() {
-    // Si ya existe el modal de éxito, bórralo antes de crear uno nuevo
     const existingModal = document.getElementById("modalExito");
     if (existingModal) existingModal.remove();
 
