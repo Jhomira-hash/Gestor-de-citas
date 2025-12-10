@@ -7,6 +7,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     let nombre = null;
     let dni = null;
 
+    // Si son solo números = es DNI
     if (/^\d+$/.test(identificador)) {
         dni = identificador;
     } else {
@@ -23,14 +24,21 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         const data = await response.json();
 
         if (response.ok && data.usuario) {
+
+
+            localStorage.setItem("usuario", JSON.stringify(data.usuario));
+
             alert(`✅ Bienvenido, ${data.usuario.nombre}!`);
+
+            // Redirigir al inicio
             window.location.href = "inicio.html";
+
         } else {
             alert("❌ Credenciales incorrectas. Intenta nuevamente.");
         }
+
     } catch (error) {
         console.error("Error al conectar con el servidor:", error);
         alert("⚠️ No se pudo conectar con el servidor.");
     }
-}
-);
+});

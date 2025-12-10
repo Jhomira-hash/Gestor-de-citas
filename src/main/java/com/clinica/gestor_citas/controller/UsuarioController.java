@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -88,6 +89,24 @@ public class UsuarioController {
             return ResponseEntity.status(403).body("No hay usuario en sesión");
         }
         return ResponseEntity.ok(usuario);
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> actualizarPerfil(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> datos
+    ) {
+        try {
+            String telefono = datos.get("telefono");
+            String email = datos.get("email");
+
+            Usuario usuarioActualizado = usuarioService.actualizarPerfil(id, telefono, email);
+
+            return ResponseEntity.ok(usuarioActualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
 }

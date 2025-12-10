@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clínica San Martín | Ica</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../css/inicio.css">
+  <link rel="stylesheet" href="/css/inicio.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 <body>
@@ -28,8 +28,15 @@
         <li class="nav-item"><a class="nav-link" href="#medicos">Médicos</a></li>
         <li class="nav-item"><a class="nav-link" href="#testimonios">Testimonios</a></li>
         <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+
+
+        <!-- ESTE ES EL CORRECTO -->
+        <li class="nav-item">
+          <a href="MisCitas.html" id="menuVerCitas" class="nav-link" style="display:none;">Ver mis citas</a>
+        </li>
       </ul>
-      <a href="login.html" class="btn btn-purple ms-lg-3">Iniciar Sesión</a>
+
+      <a id="btnLogin" href="login.html" class="btn btn-purple ms-lg-3">Iniciar sesión</a>
     </div>
   </div>
 </nav>
@@ -256,6 +263,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../js/chatbot.js"></script>
+<script src="/js/inicio.js"></script>
+
 </body>
 </html>
 

@@ -12,7 +12,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// --- CARGAR DATOS USUARIO ---
+document.addEventListener("DOMContentLoaded", () => {
+    // Obtener usuario del localStorage
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+    const btnLogin = document.querySelector("#btnLogin");
+    const menuVerCitas = document.querySelector("#menuVerCitas");
+
+    if (!usuario) {
+        console.log("No hay usuario logeado.");
+
+        if (btnLogin) {
+            btnLogin.textContent = "Iniciar sesión";
+            btnLogin.style.display = "block";
+            btnLogin.href = "login.html";
+        }
+
+        if (menuVerCitas) menuVerCitas.style.display = "none";
+
+        return;
+    }
+
+    console.log("Usuario logeado:", usuario);
+
+    if (menuVerCitas) menuVerCitas.style.display = "block";
+
+    if (btnLogin) {
+        btnLogin.textContent = "Cerrar sesión";
+        btnLogin.style.display = "block";
+        btnLogin.href = "#"; // Prevenir navegación
+        btnLogin.addEventListener("click", () => {
+            localStorage.removeItem("usuario"); // Elimina el usuario
+            location.reload(); // Recargar la página
+        });
+    }
+});
+
 async function cargarPerfilUsuario() {
     try {
         const res = await fetch("http://localhost:8085/api/usuarios/perfil", {
@@ -36,7 +71,6 @@ async function cargarPerfilUsuario() {
     }
 }
 
-// --- LOGICA DE SELECTS CASCADA ---
 function inicializarSelects() {
     const selectEspecialidad = document.getElementById('especialidad');
     const selectMedico = document.getElementById('medico');
@@ -122,7 +156,6 @@ function inicializarSelects() {
     });
 }
 
-// --- FUNCIÓN CONFIRMAR CITA (Aquí estaba el error visual) ---
 function confirmarCita() {
     const nombre = document.getElementById("nombre").value;
     const dni = document.getElementById("dni").value;
@@ -134,13 +167,12 @@ function confirmarCita() {
     const fecha = document.getElementById("fecha").value;
     const hora = document.getElementById("hora").value;
 
-    // Validación
+
     if (!especialidadSelect.value || !medicoSelect.value || !fecha || !hora) {
         alert("⚠️ Por favor, selecciona Especialidad, Médico, Fecha y Hora.");
         return;
     }
 
-    // Generar HTML del Modal
     const resumenHTML = `
     <ul class="list-group list-group-flush">
       <li class="list-group-item"><strong>👤 Paciente:</strong> ${nombre}</li>
@@ -174,7 +206,6 @@ function confirmarCita() {
     };
 }
 
-// --- ENVÍO AL BACKEND ---
 async function enviarReservaBackend() {
     try {
         const especialidadId = document.getElementById("especialidad").value;

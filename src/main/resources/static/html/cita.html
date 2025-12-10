@@ -11,9 +11,10 @@
 <body>
 
 <!-- ===== NAVBAR ===== -->
+<!-- ===== NAVBAR ===== -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="inicio.html">
+        <a class="navbar-brand d-flex align-items-center" href="#">
             <img src="../img/logo-clinica.png" alt="Logo Clínica San Martín" width="40" height="40" class="me-2">
             <span>Clínica San Martín</span>
         </a>
@@ -28,8 +29,15 @@
                 <li class="nav-item"><a class="nav-link" href="inicio.html#medicos">Médicos</a></li>
                 <li class="nav-item"><a class="nav-link" href="inicio.html#testimonios">Testimonios</a></li>
                 <li class="nav-item"><a class="nav-link" href="inicio.html#contacto">Contacto</a></li>
+
+
+                <!-- ESTE ES EL CORRECTO -->
+                <li class="nav-item">
+                    <a href="MisCitas.html" id="menuVerCitas" class="nav-link" style="display:none;">Ver mis citas</a>
+                </li>
             </ul>
-            <a href="login.html" class="btn btn-purple ms-lg-3">Iniciar Sesion</a>
+
+            <a id="btnLogin" href="login.html" class="btn btn-purple ms-lg-3">Iniciar sesión</a>
         </div>
     </div>
 </nav>

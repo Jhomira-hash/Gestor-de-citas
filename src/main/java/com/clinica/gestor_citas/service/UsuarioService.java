@@ -37,4 +37,14 @@ public class UsuarioService {
         return usuarioRepository.findByNombre(nombre);
     }
 
+    public Usuario actualizarPerfil(Long id, String telefono, String email) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuario.setTelefono(telefono);
+        usuario.setEmail(email);
+
+        return usuarioRepository.save(usuario);
+    }
+
 }
