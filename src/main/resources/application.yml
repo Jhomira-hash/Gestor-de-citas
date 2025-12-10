@@ -19,7 +19,7 @@ server:
     connection-timeout: 60000
   port: 8085
 
-# eliminacion de ApiKey
+# Espacio para la configuración de groq api
 
 
 # Logging para debug
