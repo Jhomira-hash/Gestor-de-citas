@@ -15,22 +15,21 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.style.display = "flex";
       sessionStorage.removeItem("autoOpenChat");
   }
-  // Cargar historial
   conversationHistory.forEach(chat => addMessageToUI(chat.role, chat.content));
-
-  // Restaurar estado del formulario (Autocompletado al cargar página)
   restaurarEstadoFormulario();
 
-  // ESCUCHA DE EVENTO: CITA REGISTRADA CON ÉXITO
-    document.addEventListener('citaRegistrada', () => {
-      console.log("🤖 Chatbot: Cita detectada, iniciando despedida...");
+  // 2. FUNCIÓN GLOBAL DE FINALIZACIÓN
+  window.finalizarChatPorExito = function() {
+      console.log("🤖 Chatbot: Recibida notificación de éxito. Cerrando...");
 
       saveAndShowMessage("assistant", "¡Excelente! Tu cita ha sido confirmada con éxito. 🎉<br>Ha sido un placer ayudarte. ¡Cuídate mucho! 👋");
+
       setTimeout(() => {
-          resetConversation(true);
+          resetConversation(true); // true = silencio (sin saludo)
           modal.style.display = "none";
       }, 4000);
-      });
+  };
+
 
   function addMessageToUI(role, text) {
       const msgDiv = document.createElement("div");

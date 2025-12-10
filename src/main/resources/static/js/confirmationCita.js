@@ -203,7 +203,7 @@ async function enviarReservaBackend() {
         const fecha = document.getElementById("fecha").value;
         const hora = document.getElementById("hora").value;
 
-        // Buscar horario exacto
+        // Buscar horario
         const horarioRes = await fetch(
             `http://localhost:8085/api/horarios/buscar?medicoId=${medicoId}&fecha=${fecha}&hora=${hora}`,
             { credentials: "include" }
@@ -225,8 +225,13 @@ async function enviarReservaBackend() {
         });
 
         if (!citaRes.ok) throw new Error("Error al registrar la cita.");
-        mostrarExitoModal();
 
+        mostrarExitoModal();
+        if (typeof window.finalizarChatPorExito === "function") {
+            window.finalizarChatPorExito();
+        } else {
+            console.log("El chatbot no está activo o no se cargó la función.");
+        }
     } catch (err) {
         console.error("❌ Error:", err);
         alert("Ocurrió un error: " + err.message);
